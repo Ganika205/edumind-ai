@@ -51,8 +51,9 @@ def chat(req: Req, request: Request):
             {"type": "text", "text": msgs[-1]["content"]}]
     try:
         r = client.messages.create(model=MODEL, max_tokens=4000, system=PERSONA + req.system[:2000], messages=msgs)
-    except Exception:
-        raise HTTPException(502, "ai error")
+       except Exception as e:
+          print("AI ERROR:", repr(e), flush=True)
+          raise HTTPException(502, "ai error")
     return {"text": "".join(b.text for b in r.content if b.type == "text")}
 
 app.mount("/", StaticFiles(directory="static", html=True), name="static")
